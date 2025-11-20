@@ -316,14 +316,14 @@ def runCommand (s : Command) : M IO (CommandResponse ⊕ Error) := do
   let tactics ← match s.allTactics with
   | some true => tactics trees initialCmdState.env
   | _ => pure []
-  let cmdSnapshot :=
-  { cmdState
-    cmdContext := (cmdSnapshot?.map fun c => c.cmdContext).getD
-      { fileName := "",
-        fileMap := default,
-        snap? := none,
-        cancelTk? := none } }
-  let env ← recordCommandSnapshot cmdSnapshot
+  -- let cmdSnapshot :=
+  -- { cmdState
+  --   cmdContext := (cmdSnapshot?.map fun c => c.cmdContext).getD
+  --     { fileName := "",
+  --       fileMap := default,
+  --       snap? := none,
+  --       cancelTk? := none } }
+  -- let env ← recordCommandSnapshot cmdSnapshot
   let jsonTrees := match s.infotree with
   | some "full" => trees
   | some "tactics" => trees.flatMap InfoTree.retainTacticInfo
@@ -335,7 +335,7 @@ def runCommand (s : Command) : M IO (CommandResponse ⊕ Error) := do
   else
     pure <| some <| Json.arr (← jsonTrees.toArray.mapM fun t => t.toJson none)
   return .inl
-    { env,
+    { env := 0, -- env
       messages,
       sorries,
       tactics
